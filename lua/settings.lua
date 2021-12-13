@@ -69,14 +69,14 @@ local colors = {
 
 local theme = {
   normal = {
-    a = { fg = colors.white, bg = colors.black},
+    a = { fg = colors.white, bg = colors.black },
     b = { fg = colors.white, bg = colors.grey },
     c = { fg = colors.black, bg = colors.white },
     z = { fg = colors.white, bg = colors.black },
   },
   insert = { a = { fg = colors.black, bg = colors.light_green } },
   visual = { a = { fg = colors.black, bg = colors.orange } },
-  replace = { a = { fg = colors.black, bg = colors.green } },
+  replace = { a = { fg = colors.black, bg = colors.green } }
 }
 
 local empty = require('lualine.component'):extend()
@@ -129,7 +129,7 @@ end
 
 require('lualine').setup {
   options = {
-    theme = theme,
+    theme = 'powerline',
     component_separators = '',
     section_separators = { left = '', right = '' },
   },
@@ -137,7 +137,15 @@ require('lualine').setup {
     lualine_a = { 'mode' },
     lualine_b = {
       'branch',
-      'diff',
+      {
+        'diff',
+        source = {'nvim'},
+        diff_color = {
+            add = { fg = colors.green },
+            modified = { fg = colors.orange },
+            removed = { fg = colors.red }
+        }
+      },
       {
         'diagnostics',
         source = { 'nvim' },

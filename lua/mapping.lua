@@ -23,7 +23,7 @@ map('n', '<leader>bd', '<cmd>bd<CR>')
 
 map('n', '<leader>ev', '<cmd>e $MYVIMRC<CR>')
 
-map('n', '<leader>j', '<cmd>HopWordAC<CR>')
-map('n', '<leader>k', '<cmd>HopWordBC<CR>')
+map('n', '<leader><leader>j', '<cmd>HopWordAC<CR>')
+map('n', '<leader><leader>k', '<cmd>HopWordBC<CR>')
 map('n', '<leader>ll', '<cmd>HopLine<CR>')
 
