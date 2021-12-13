@@ -7,7 +7,6 @@ if fn.empty(fn.glob(install_path)) > 0 then
 end
 
 cmd [[packadd packer.nvim]]
-cmd [[packadd edge]]
 
 --setup packer
 require('packer').startup(function()
