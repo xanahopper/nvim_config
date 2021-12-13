@@ -205,3 +205,5 @@ cmd [[colorscheme molokai]]
 
 -- Edge
 
+require 'telescope'.setup()
+

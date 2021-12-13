@@ -29,6 +29,12 @@ require('packer').startup(function()
     }
     use 'junegunn/vim-easy-align'
     use 'sainnhe/edge'
-
+    use 'nvim-treesitter'
+    use 'sharkdp/fd'
+    use 'BurntSushi/ripgrep'
+    use {
+        'nvim-telescope/telescope.nvim',
+        requires = { {'nvim-lua/plenary.nvim'} }
+    }
 end)
 
