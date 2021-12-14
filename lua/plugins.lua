@@ -12,12 +12,9 @@ cmd [[packadd packer.nvim]]
 require('packer').startup(function()
 	use "wbthomason/packer.nvim"
 	use 'nvim-lualine/lualine.nvim'
-	-- using packer.nvim
-	-- use {'akinsho/bufferline.nvim', requires = 'kyazdani42/nvim-web-devicons'}
-	use {
-		'kdheepak/tabline.nvim',
-		requires = { { 'hoob3rt/lualine.nvim', opt=true }, {'kyazdani42/nvim-web-devicons', opt = true} }
-	}
+    use 'kyazdani42/nvim-web-devicons'
+    -- use {'akinsho/bufferline.nvim', requires = 'kyazdani42/nvim-web-devicons'}
+    use 'kdheepak/tabline.nvim'
 	use 'tomasr/molokai'
     use {
         'phaazon/hop.nvim',
@@ -36,5 +33,22 @@ require('packer').startup(function()
         requires = { {'nvim-lua/plenary.nvim'} }
     }
     use 'nvim-treesitter/nvim-treesitter'
+    use 'Shatur/neovim-session-manager'
+    use 'yamatsum/nvim-cursorline'
+    use 'glepnir/dashboard-nvim'
+    use 'nvim-telescope/telescope-packer.nvim'
+    use 'lukas-reineke/indent-blankline.nvim'
+    use 'numToStr/Comment.nvim'
+    use {
+      "folke/todo-comments.nvim",
+      requires = "nvim-lua/plenary.nvim",
+      config = function()
+        require("todo-comments").setup {
+          -- your configuration comes here
+          -- or leave it empty to use the default settings
+          -- refer to the configuration section below
+        }
+      end
+    }
 end)
 

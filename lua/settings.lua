@@ -19,6 +19,7 @@ opt('o', 'number', true)
 opt('o', 'relativenumber', true)
 opt('o', 'autoread', true)
 opt('o', 'wildignore', '*.swap,*.bak,*.pyc,*.class,.svn')
+opt('o', 'whichwrap', 'b,s,<,>,h,l,[,]')
 opt('o', 'cursorcolumn', true)
 opt('o', 'cursorline', true)
 opt('o', 'visualbell', false)
@@ -27,7 +28,7 @@ opt('o', 'tm', 500)
 opt('o', 'scrolloff', 5)
 opt('o', 'ignorecase', true)
 opt('o', 'smartcase', true)
-opt('o', 'foldenable', true)
+opt('o', 'foldenable', false)
 opt('o', 'foldmethod', 'indent')
 opt('o', 'foldlevel', 99)
 opt('o', 'smartindent', true)
@@ -43,18 +44,79 @@ opt('o', 'ttyfast', true)
 opt('o', 'title', true)
 opt('o', 'encoding', 'utf-8')
 opt('o', 'background', 'dark')
-opt('o', 'guifont', 'JetBrainsMono Nerd Font Mono:12h')
+opt('o', 'guifont', 'JetBrainsMono Nerd Font Mono:h13')
+
+g.neovide_remember_window_size = 'v:true'
+g.neovide_input_use_logo = 'v:true'
+g.neovide_cursor_vfx_mode = 'sonicboom'
+g.dashboard_default_executive = 'Telescope'
+
+g.dashboard_custom_section = {
+    a = {description = {"  Find File                 SPC f f"}, command = "Telescope find_files"},
+    b = {description = {"  Recents                   SPC f h"}, command = "Telescope oldfiles"},
+    c = {description = {"縷 Find Word                 SPC f g"}, command = "Telescope live_grep"},
+    e = {description = {"  Sessions                  SPC f s"}, command = "Telescope sessions"},
+    f = {description = {"  Load Last Session         SPC l s"}, command = "LoadLastSession!"},
+    g = {description = {"  Update Plugins            SPC p u"}, command = "PackerUpdate"},
+    h = {description = {"  Settings                  SPC e v"}, command = "edit $MYVIMRC"},
+    i = {description = {"  Exit                      SPC q  "}, command = "exit"}
+}
+g.dashboard_custom_header = {
+       "            :h-                                  Nhy`               ",
+       "           -mh.                           h.    `Ndho               ",
+       "           hmh+                          oNm.   oNdhh               ",
+       "          `Nmhd`                        /NNmd  /NNhhd               ",
+       "          -NNhhy                      `hMNmmm`+NNdhhh               ",
+       "          .NNmhhs              ```....`..-:/./mNdhhh+               ",
+       "           mNNdhhh-     `.-::///+++////++//:--.`-/sd`               ",
+       "           oNNNdhhdo..://++//++++++/+++//++///++/-.`                ",
+       "      y.   `mNNNmhhhdy+/++++//+/////++//+++///++////-` `/oos:       ",
+       " .    Nmy:  :NNNNmhhhhdy+/++/+++///:.....--:////+++///:.`:s+        ",
+       " h-   dNmNmy oNNNNNdhhhhy:/+/+++/-         ---:/+++//++//.`         ",
+       " hd+` -NNNy`./dNNNNNhhhh+-://///    -+oo:`  ::-:+////++///:`        ",
+       " /Nmhs+oss-:++/dNNNmhho:--::///    /mmmmmo  ../-///++///////.       ",
+       "  oNNdhhhhhhhs//osso/:---:::///    /yyyyso  ..o+-//////////:/.      ",
+       "   /mNNNmdhhhh/://+///::://////     -:::- ..+sy+:////////::/:/.     ",
+       "     /hNNNdhhs--:/+++////++/////.      ..-/yhhs-/////////::/::/`    ",
+       "       .ooo+/-::::/+///////++++//-/ossyyhhhhs/:///////:::/::::/:    ",
+       "       -///:::::::////++///+++/////:/+ooo+/::///////.::://::---+`   ",
+       "       /////+//++++/////+////-..//////////::-:::--`.:///:---:::/:   ",
+       "       //+++//++++++////+++///::--                 .::::-------::   ",
+       "       :/++++///////////++++//////.                -:/:----::../-   ",
+       "       -/++++//++///+//////////////               .::::---:::-.+`   ",
+       "       `////////////////////////////:.            --::-----...-/    ",
+       "        -///://////////////////////::::-..      :-:-:-..-::.`.+`    ",
+       "         :/://///:///::://::://::::::/:::::::-:---::-.-....``/- -   ",
+       "           ::::://::://::::::::::::::----------..-:....`.../- -+oo/ ",
+       "            -/:::-:::::---://:-::-::::----::---.-.......`-/.      ``",
+       "           s-`::--:::------:////----:---.-:::...-.....`./:          ",
+       "          yMNy.`::-.--::..-dmmhhhs-..-.-.......`.....-/:`           ",
+       "         oMNNNh. `-::--...:NNNdhhh/.--.`..``.......:/-              ",
+       "        :dy+:`      .-::-..NNNhhd+``..`...````.-::-`                ",
+       "                        .-:mNdhh:.......--::::-`                    ",
+       "                           yNh/..------..`                          ",
+       "                                                                    ",
+       "                              N E O V I M                           ",
+       }
 g.edge_style = 'edge'
 
 cmd [[
-  au FocusLost * :set norelativenumber number
-  au FocusGained * :set relativenumber
+  " Remove dashboard number autocmd
+  au FileType dashboard,dashpreview,NvimTree,TelescopePrompt set showtabline=0 | set nornu nonu | autocmd BufLeave <buffer> set showtabline=2 | autocmd BufEnter <buffer> set showtabline=0 nornu nonu
+  au FileType * set rnu nonu | call NumberToggle()
+  fun! NumberToggle()
+    if (&ft == 'dashboard')
+        au! FocusLost *
+        au! FocusGained *
+        :set norelativenumber nonumber
+    else
+        au FocusLost <buffer> :set norelativenumber number
+        au FocusGained <buffer> :set relativenumber
+    endif
+  endfunction
 
   au InsertEnter * :set norelativenumber number
   au InsertLeave * :set relativenumber
-
-  au Syntax * call matchadd('Todo', '\W\zs\(TODO\|FIXME\|CHANGED\|DONE\|XXX\|BUG\|HACK\)')
-  au Syntax * call matchadd('Debug', '\W\zs\(NOTE\|INFO\|IDEA\|NOTICE\)')
 ]]
 
 local colors = {
@@ -127,6 +189,17 @@ local function modified()
   return ''
 end
 
+local function current_session()
+    local session_utils = require 'session_manager.utils'
+    local session_file = vim.v.this_session
+    if session_utils == nil or session_file == nil then
+        return ''
+    else
+        local session_name = session_utils.session_filename_to_dir(session_file)
+        return session_name or ''
+    end
+end
+
 require('lualine').setup {
   options = {
     theme = 'powerline',
@@ -181,7 +254,7 @@ require('lualine').setup {
     },
     lualine_c = {},
     lualine_x = {},
-    lualine_y = { search_result, 'filetype' },
+    lualine_y = { current_session, search_result, 'filetype' },
     lualine_z = { '%l:%c', '%p%%/%L' },
   },
   inactive_sections = {
@@ -192,7 +265,7 @@ require('lualine').setup {
 
 require 'tabline'.setup {
     tabline_show_devicons = true,
-    tabline_showbufnr = false,
+    tabline_showbufnr = true,
     tabline_show_filename_only = true,
 }
 require 'hop'.setup()
@@ -203,7 +276,80 @@ cmd [[
 
 cmd [[colorscheme molokai]]
 
--- Edge
+local Path = require('plenary.path')
+local telescope = require 'telescope'
+telescope.setup()
+require 'session_manager'.setup {
+    sessions_dir = Path:new(vim.fn.stdpath('data'), 'sessions'),
+    path_replacer = '__',
+    colon_replacer = '++',
+    autoload_mode = require('session_manager.config').AutoloadMode.Disabled,
+    autosave_last_session = true,
+    autosave_ignore_not_normal = true,
+    autosave_only_in_session = false
+}
+telescope.load_extension('sessions')
+telescope.load_extension('packer')
 
-require 'telescope'.setup()
-
+require 'Comment'.setup()
+require("indent_blankline").setup {
+    show_current_context = true,
+    show_current_context_start = true,
+    filetype_exclude = {'help','dashboard','dashpreview','NvimTree','vista','sagahover', 'TelescopePrompt' }
+}
+-- FIXME
+require("todo-comments").setup {
+  signs = true, -- show icons in the signs column
+  sign_priority = 8, -- sign priority
+  -- keywords recognized as todo comments
+  keywords = {
+    FIX = {
+      icon = " ", -- icon used for the sign, and in search results
+      color = "error", -- can be a hex color, or a named color (see below)
+      alt = { "FIXME", "BUG", "FIXIT", "ISSUE" }, -- a set of other keywords that all map to this FIX keywords
+      -- signs = false, -- configure signs for some keywords individually
+    },
+    TODO = { icon = " ", color = "info" },
+    HACK = { icon = " ", color = "warning" },
+    WARN = { icon = " ", color = "warning", alt = { "WARNING", "XXX" } },
+    PERF = { icon = " ", alt = { "OPTIM", "PERFORMANCE", "OPTIMIZE" } },
+    NOTE = { icon = " ", color = "hint", alt = { "INFO" } },
+  },
+  merge_keywords = true, -- when true, custom keywords will be merged with the defaults
+  -- highlighting of the line containing the todo comment
+  -- * before: highlights before the keyword (typically comment characters)
+  -- * keyword: highlights of the keyword
+  -- * after: highlights after the keyword (todo text)
+  highlight = {
+    before = "", -- "fg" or "bg" or empty
+    keyword = "wide", -- "fg", "bg", "wide" or empty. (wide is the same as bg, but will also highlight surrounding characters)
+    after = "fg", -- "fg" or "bg" or empty
+    pattern = [[.*<(KEYWORDS)\s*:]], -- pattern or table of patterns, used for highlightng (vim regex)
+    comments_only = true, -- uses treesitter to match keywords in comments only
+    max_line_len = 400, -- ignore lines longer than this
+    exclude = {}, -- list of file types to exclude highlighting
+  },
+  -- list of named colors where we try to extract the guifg from the
+  -- list of hilight groups or use the hex color if hl not found as a fallback
+  colors = {
+    error = { "DiagnosticError", "ErrorMsg", "#DC2626" },
+    warning = { "DiagnosticWarning", "WarningMsg", "#FBBF24" },
+    info = { "DiagnosticInfo", "#2563EB" },
+    hint = { "DiagnosticHint", "#10B981" },
+    default = { "Identifier", "#7C3AED" },
+  },
+  search = {
+    command = "rg",
+    args = {
+      "--color=never",
+      "--no-heading",
+      "--with-filename",
+      "--line-number",
+      "--column",
+    },
+    -- regex that will be used to match keywords.
+    -- don't replace the (KEYWORDS) placeholder
+    pattern = [[\b(KEYWORDS):]], -- ripgrep regex
+    -- pattern = [[\b(KEYWORDS)\b]], -- match without the extra colon. You'll likely get false positives
+  },
+}
