@@ -49,6 +49,7 @@ opt('o', 'guifont', 'JetBrainsMono Nerd Font Mono:h13')
 g.neovide_remember_window_size = 'v:true'
 g.neovide_input_use_logo = 'v:true'
 g.neovide_cursor_vfx_mode = 'sonicboom'
+
 g.dashboard_default_executive = 'Telescope'
 
 g.dashboard_custom_section = {
@@ -61,6 +62,27 @@ g.dashboard_custom_section = {
     h = {description = {"  Settings                  SPC e v"}, command = "edit $MYVIMRC"},
     i = {description = {"  Exit                      SPC q  "}, command = "exit"}
 }
+local utils = require('telescope.utils')
+local set_var = vim.api.nvim_set_var
+
+local git_root, ret = utils.get_os_command_output({ "git", "rev-parse", "--show-toplevel" }, vim.loop.cwd())
+
+local function get_dashboard_git_status()
+  local git_cmd = {'git', 'status', '-s', '--', '.'}
+  local output = utils.get_os_command_output(git_cmd)
+  set_var('dashboard_custom_footer', {'Git status', '', unpack(output)})
+end
+
+if ret ~= 0 then
+  local is_worktree = utils.get_os_command_output({ "git", "rev-parse", "--is-inside-work-tree" }, vim.loop.cwd())
+  if is_worktree[1] == "true" then
+    get_dashboard_git_status()
+  else
+    set_var('dashboard_custom_footer', {'Not in a git directory'})
+  end
+else
+    get_dashboard_git_status()
+end
 g.dashboard_custom_header = {
        "            :h-                                  Nhy`               ",
        "           -mh.                           h.    `Ndho               ",
@@ -202,7 +224,7 @@ end
 
 require('lualine').setup {
   options = {
-    theme = 'powerline',
+    theme = 'nord',
     component_separators = '',
     section_separators = { left = '', right = '' },
   },
@@ -278,7 +300,17 @@ cmd [[colorscheme molokai]]
 
 local Path = require('plenary.path')
 local telescope = require 'telescope'
-telescope.setup()
+telescope.setup {
+    extensions = {
+        fzf = {
+          fuzzy = true,                    -- false will only do exact matching
+          override_generic_sorter = true,  -- override the generic sorter
+          override_file_sorter = true,     -- override the file sorter
+          case_mode = "smart_case",        -- or "ignore_case" or "respect_case"
+                                           -- the default case_mode is "smart_case"
+        }
+    }
+}
 require 'session_manager'.setup {
     sessions_dir = Path:new(vim.fn.stdpath('data'), 'sessions'),
     path_replacer = '__',
@@ -290,6 +322,7 @@ require 'session_manager'.setup {
 }
 telescope.load_extension('sessions')
 telescope.load_extension('packer')
+telescope.load_extension('fzf')
 
 require 'Comment'.setup()
 require("indent_blankline").setup {
@@ -297,7 +330,34 @@ require("indent_blankline").setup {
     show_current_context_start = true,
     filetype_exclude = {'help','dashboard','dashpreview','NvimTree','vista','sagahover', 'TelescopePrompt' }
 }
--- FIXME
+local nvim_lsp = require 'lspconfig'
+
+local on_attach = function(client)
+    require 'completion'.on_attach(client)
+end
+
+nvim_lsp.rust_analyzer.setup {
+    on_attach = on_attach,
+    settings = {
+        ["rust-analyzer"] = {
+            assist = {
+                importGranularity = "module",
+                importPrefix = "by_self",
+            },
+            cargo = {
+                loadOutDirsFromCheck = true,
+            },
+            procMacro = {
+                enable = true
+            },
+        }
+    }
+}
+
+require('nvim-autopairs').setup({
+  disable_filetype = { "TelescopePrompt" , "vim" },
+})
+
 require("todo-comments").setup {
   signs = true, -- show icons in the signs column
   sign_priority = 8, -- sign priority
@@ -320,15 +380,16 @@ require("todo-comments").setup {
   -- * before: highlights before the keyword (typically comment characters)
   -- * keyword: highlights of the keyword
   -- * after: highlights after the keyword (todo text)
-  highlight = {
-    before = "", -- "fg" or "bg" or empty
-    keyword = "wide", -- "fg", "bg", "wide" or empty. (wide is the same as bg, but will also highlight surrounding characters)
-    after = "fg", -- "fg" or "bg" or empty
-    pattern = [[.*<(KEYWORDS)\s*:]], -- pattern or table of patterns, used for highlightng (vim regex)
-    comments_only = true, -- uses treesitter to match keywords in comments only
-    max_line_len = 400, -- ignore lines longer than this
-    exclude = {}, -- list of file types to exclude highlighting
-  },
+  -- highlight = {
+  --   before = "", -- "fg" or "bg" or empty
+  --   keyword = "wide", -- "fg", "bg", "wide" or empty. (wide is the same as bg, but will also highlight surrounding characters)
+  --   after = "fg", -- "fg" or "bg" or empty
+  --   pattern = [[.*<(KEYWORDS)\s*:]], -- pattern or table of patterns, used for highlightng (vim regex)
+  --   comments_only = true, -- uses treesitter to match keywords in comments only
+  --   max_line_len = 400, -- ignore lines longer than this
+  --   exclude = {}, -- list of file types to exclude highlighting
+  -- },
+  -- FIXME
   -- list of named colors where we try to extract the guifg from the
   -- list of hilight groups or use the hex color if hl not found as a fallback
   colors = {
@@ -347,7 +408,7 @@ require("todo-comments").setup {
       "--line-number",
       "--column",
     },
-    -- regex that will be used to match keywords.
+-- regex that will be used to match keywords.
     -- don't replace the (KEYWORDS) placeholder
     pattern = [[\b(KEYWORDS):]], -- ripgrep regex
     -- pattern = [[\b(KEYWORDS)\b]], -- match without the extra colon. You'll likely get false positives

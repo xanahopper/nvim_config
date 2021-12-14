@@ -32,6 +32,7 @@ require('packer').startup(function()
         'nvim-telescope/telescope.nvim',
         requires = { {'nvim-lua/plenary.nvim'} }
     }
+    use {'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
     use 'nvim-treesitter/nvim-treesitter'
     use 'Shatur/neovim-session-manager'
     use 'yamatsum/nvim-cursorline'
@@ -50,5 +51,16 @@ require('packer').startup(function()
         }
       end
     }
+    use 'windwp/nvim-autopairs'
+    use 'neovim/nvim-lspconfig'
+
+    -- Dart/Flutter
+    use 'dart-lang/dart-vim-plugin'
+    use 'thosakwe/vim-flutter'
+    use 'natebosch/vim-lsc'
+    use 'natebosch/vim-lsc-dart'
+
+    -- themes
+    use 'shaunsingh/nord.nvim'
 end)
 
