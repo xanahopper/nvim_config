@@ -39,6 +39,7 @@ require('packer').startup(function()
     use 'glepnir/dashboard-nvim'
     use 'nvim-telescope/telescope-packer.nvim'
     use 'lukas-reineke/indent-blankline.nvim'
+    use 'akinsho/toggleterm.nvim'
     use 'numToStr/Comment.nvim'
     use {
       "folke/todo-comments.nvim",
@@ -53,12 +54,20 @@ require('packer').startup(function()
     }
     use 'windwp/nvim-autopairs'
     use 'neovim/nvim-lspconfig'
+    use 'hrsh7th/nvim-cmp'
+    use 'hrsh7th/cmp-nvim-lsp'
+    use 'hrsh7th/cmp-vsnip'
+    use 'hrsh7th/cmp-buffer'
+    use 'hrsh7th/cmp-path'
+    use 'simrat39/rust-tools.nvim'
+    use 'nvim-lua/popup.nvim'
 
     -- Dart/Flutter
     use 'dart-lang/dart-vim-plugin'
-    use 'thosakwe/vim-flutter'
-    use 'natebosch/vim-lsc'
-    use 'natebosch/vim-lsc-dart'
+    -- use 'thosakwe/vim-flutter'
+    -- use 'natebosch/vim-lsc'
+    -- use 'natebosch/vim-lsc-dart'
+    use 'akinsho/flutter-tools.nvim'
 
     -- themes
     use 'shaunsingh/nord.nvim'

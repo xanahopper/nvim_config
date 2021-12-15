@@ -49,3 +49,11 @@ map('n', '<leader>rl', '<cmd>luafile %<cr>')
 map('n', '<leader>pu', '<cmd>PackerUpdate<cr>')
 map('n', '<leader>da', '<cmd>Dashboard<cr>')
 
+-- LSP & Completetion
+local on_attach = function(client, bufnr)
+    local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+
+    local opts = {noremap=true, silent=true}
+
+    buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opt)
+end

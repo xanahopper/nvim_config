@@ -46,8 +46,8 @@ opt('o', 'encoding', 'utf-8')
 opt('o', 'background', 'dark')
 opt('o', 'guifont', 'JetBrainsMono Nerd Font Mono:h13')
 
-g.neovide_remember_window_size = 'v:true'
-g.neovide_input_use_logo = 'v:true'
+g.neovide_remember_window_size = 1
+g.neovide_input_use_logo = 1
 g.neovide_cursor_vfx_mode = 'sonicboom'
 
 g.dashboard_default_executive = 'Telescope'
@@ -123,6 +123,7 @@ g.dashboard_custom_header = {
 g.edge_style = 'edge'
 
 cmd [[
+  autocmd FileType netrw setl bufhidden=wipe
   " Remove dashboard number autocmd
   au FileType dashboard,dashpreview,NvimTree,TelescopePrompt set showtabline=0 | set nornu nonu | autocmd BufLeave <buffer> set showtabline=2 | autocmd BufEnter <buffer> set showtabline=0 nornu nonu
   au FileType * set rnu nonu | call NumberToggle()
@@ -330,30 +331,6 @@ require("indent_blankline").setup {
     show_current_context_start = true,
     filetype_exclude = {'help','dashboard','dashpreview','NvimTree','vista','sagahover', 'TelescopePrompt' }
 }
-local nvim_lsp = require 'lspconfig'
-
-local on_attach = function(client)
-    require 'completion'.on_attach(client)
-end
-
-nvim_lsp.rust_analyzer.setup {
-    on_attach = on_attach,
-    settings = {
-        ["rust-analyzer"] = {
-            assist = {
-                importGranularity = "module",
-                importPrefix = "by_self",
-            },
-            cargo = {
-                loadOutDirsFromCheck = true,
-            },
-            procMacro = {
-                enable = true
-            },
-        }
-    }
-}
-
 require('nvim-autopairs').setup({
   disable_filetype = { "TelescopePrompt" , "vim" },
 })
