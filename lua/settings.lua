@@ -83,63 +83,28 @@ if ret ~= 0 then
 else
     get_dashboard_git_status()
 end
-g.dashboard_custom_header = {
-       "            :h-                                  Nhy`               ",
-       "           -mh.                           h.    `Ndho               ",
-       "           hmh+                          oNm.   oNdhh               ",
-       "          `Nmhd`                        /NNmd  /NNhhd               ",
-       "          -NNhhy                      `hMNmmm`+NNdhhh               ",
-       "          .NNmhhs              ```....`..-:/./mNdhhh+               ",
-       "           mNNdhhh-     `.-::///+++////++//:--.`-/sd`               ",
-       "           oNNNdhhdo..://++//++++++/+++//++///++/-.`                ",
-       "      y.   `mNNNmhhhdy+/++++//+/////++//+++///++////-` `/oos:       ",
-       " .    Nmy:  :NNNNmhhhhdy+/++/+++///:.....--:////+++///:.`:s+        ",
-       " h-   dNmNmy oNNNNNdhhhhy:/+/+++/-         ---:/+++//++//.`         ",
-       " hd+` -NNNy`./dNNNNNhhhh+-://///    -+oo:`  ::-:+////++///:`        ",
-       " /Nmhs+oss-:++/dNNNmhho:--::///    /mmmmmo  ../-///++///////.       ",
-       "  oNNdhhhhhhhs//osso/:---:::///    /yyyyso  ..o+-//////////:/.      ",
-       "   /mNNNmdhhhh/://+///::://////     -:::- ..+sy+:////////::/:/.     ",
-       "     /hNNNdhhs--:/+++////++/////.      ..-/yhhs-/////////::/::/`    ",
-       "       .ooo+/-::::/+///////++++//-/ossyyhhhhs/:///////:::/::::/:    ",
-       "       -///:::::::////++///+++/////:/+ooo+/::///////.::://::---+`   ",
-       "       /////+//++++/////+////-..//////////::-:::--`.:///:---:::/:   ",
-       "       //+++//++++++////+++///::--                 .::::-------::   ",
-       "       :/++++///////////++++//////.                -:/:----::../-   ",
-       "       -/++++//++///+//////////////               .::::---:::-.+`   ",
-       "       `////////////////////////////:.            --::-----...-/    ",
-       "        -///://////////////////////::::-..      :-:-:-..-::.`.+`    ",
-       "         :/://///:///::://::://::::::/:::::::-:---::-.-....``/- -   ",
-       "           ::::://::://::::::::::::::----------..-:....`.../- -+oo/ ",
-       "            -/:::-:::::---://:-::-::::----::---.-.......`-/.      ``",
-       "           s-`::--:::------:////----:---.-:::...-.....`./:          ",
-       "          yMNy.`::-.--::..-dmmhhhs-..-.-.......`.....-/:`           ",
-       "         oMNNNh. `-::--...:NNNdhhh/.--.`..``.......:/-              ",
-       "        :dy+:`      .-::-..NNNhhd+``..`...````.-::-`                ",
-       "                        .-:mNdhh:.......--::::-`                    ",
-       "                           yNh/..------..`                          ",
-       "                                                                    ",
-       "                              N E O V I M                           ",
-       }
+g.dashboard_custom_header = require 'const'.custom_dashboard_header
 g.edge_style = 'edge'
 
 cmd [[
-  autocmd FileType netrw setl bufhidden=wipe
-  " Remove dashboard number autocmd
-  au FileType dashboard,dashpreview,NvimTree,TelescopePrompt set showtabline=0 | set nornu nonu | autocmd BufLeave <buffer> set showtabline=2 | autocmd BufEnter <buffer> set showtabline=0 nornu nonu
-  au FileType * set rnu nonu | call NumberToggle()
-  fun! NumberToggle()
+  autocmd filetype netrw setl bufhidden=wipe
+  " remove dashboard number autocmd
+  au filetype dashboard,dashpreview,nvimtree,telescopeprompt set showtabline=0 | set nornu nonu | autocmd bufleave <buffer> set showtabline=2 | autocmd bufenter <buffer> set showtabline=0 nornu nonu
+  au filetype * set rnu nonu | call numbertoggle()
+  fun! numbertoggle()
     if (&ft == 'dashboard')
-        au! FocusLost *
-        au! FocusGained *
+        au! focuslost *
+        au! focusgained *
         :set norelativenumber nonumber
     else
-        au FocusLost <buffer> :set norelativenumber number
-        au FocusGained <buffer> :set relativenumber
+        au focuslost <buffer> :set norelativenumber number
+        au focusgained <buffer> :set relativenumber
     endif
   endfunction
 
-  au InsertEnter * :set norelativenumber number
-  au InsertLeave * :set relativenumber
+  au insertenter * :set norelativenumber number
+  au insertleave * :set relativenumber
+  au focuslost * :lua require 'utils'.try_save_session()
 ]]
 
 local colors = {
@@ -173,7 +138,7 @@ function empty:draw(default_highlight)
   return self.status
 end
 
--- Put proper separators and gaps between components in sections
+-- put proper separators and gaps between components in sections
 local function process_sections(sections)
   for name, section in pairs(sections) do
     local left = name:sub(9, 10) < 'x'
