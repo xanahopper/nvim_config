@@ -38,26 +38,6 @@ nvim_lsp.dartls.setup {
     on_attach = on_attach,
 }
 
--- nvim_lsp.rust_analyzer.setup {
---     on_attach = on_attach,
---     settings = {
---         ["rust-analyzer"] = {
---             assist = {
---                 importGranularity = "module",
---                 importPrefix = "by_self",
---             },
---             cargo = {
---                 loadOutDirsFromCheck = true,
---             },
---             procMacro = {
---                 enable = true
---             },
---             checkOnSave = {
---                 command = "clippy",
---             }
---         }
---     }
--- }
 local rust_opt = {
     tools = {
         autoSetHints = true,
@@ -70,20 +50,68 @@ local rust_opt = {
     }
 }
 require 'rust-tools'.setup(rust_opt)
-
+local cmp_autopairs = require 'nvim-autopairs.completion.cmp'
 local cmp = require 'cmp'
+-- cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done { map_char = { tex = ''} })
+-- local cmp_autopairs = require 'nvim-autopairs.completion.cmp'
+-- cmp_autopairs.lisp[#cmp_autopairs.lisp + 1] = "rust"
+-- cmp_autopairs.lisp[#cmp_autopairs.lisp + 1] = "dart"
+-- cmp_autopairs.lisp[#cmp_autopairs.lisp + 1] = "lua"
+-- cmp_autopairs.lisp[#cmp_autopairs.lisp + 1] = "toml"
+-- cmp_autopairs.lisp[#cmp_autopairs.lisp + 1] = "c"
+-- cmp_autopairs.lisp[#cmp_autopairs.lisp + 1] = "c++"
+-- cmp_autopairs.lisp[#cmp_autopairs.lisp + 1] = "javascript"
+
+local compare = require('cmp.config.compare')
+local lspkind = require('lspkind')
 cmp.setup {
     snippet = {
         expand = function(args)
-            vn.fn["vsnip#anonymous"](args.body)
+            vim.fn["vsnip#anonymous"](args.body)
         end
     },
-    sources = {
+    mapping = {
+        -- ['<Tab>'] = cmp.mapping.complete(),
+        ['<C-e>'] = cmp.mapping.close(),
+        ['<CR>'] = cmp.mapping.confirm {
+            behavior = cmp.ConfirmBehavior.Insert,
+            select = true,
+        },
+        ['<Tab>'] = cmp.mapping.confirm {
+            behavior = cmp.ConfirmBehavior.Replace,
+            select = true,
+        }
+    },
+    sources = cmp.config.sources({
         { name = 'nvim_lsp' },
         { name = 'vsnip' },
-        { name = 'path' },
+    }, {
+        -- { name = 'path' },
         { name = 'buffer' }
-    }
+    }),
+    formatting = {
+        format = lspkind.cmp_format {
+            with_text = false,
+            maxwidth = 50,
+            before = function (entry, vim_item)
+                vim_item.word = ''
+                vim_item.menu = ''
+                return vim_item
+            end
+        }
+    },
+    -- sorting = {
+    --     priority_weight = 2,
+    --     comparators = {
+    --         -- compare.offset,
+    --         -- compare.exact,
+    --         -- compare.score,
+    --         -- compare.kind,
+    --         -- compare.recently_used,
+    --         -- compare.sort_text,
+    --         compare.length
+    --     }
+    -- }
 }
 
 -- Dart/Flutter

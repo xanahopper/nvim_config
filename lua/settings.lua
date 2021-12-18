@@ -89,22 +89,22 @@ g.edge_style = 'edge'
 cmd [[
   autocmd filetype netrw setl bufhidden=wipe
   " remove dashboard number autocmd
-  au filetype dashboard,dashpreview,nvimtree,telescopeprompt set showtabline=0 | set nornu nonu | autocmd bufleave <buffer> set showtabline=2 | autocmd bufenter <buffer> set showtabline=0 nornu nonu
-  au filetype * set rnu nonu | call numbertoggle()
-  fun! numbertoggle()
+  au FileType dashboard,dashpreview,nvimtree,telescopeprompt set showtabline=0 | set nornu nonu | autocmd BufLeave <buffer> set showtabline=2 | autocmd BufEnter <buffer> set showtabline=0 nornu nonu
+  fun! NumberToggle()
     if (&ft == 'dashboard')
-        au! focuslost *
-        au! focusgained *
+        au! FocusLost *
+        au! FocusGained *
         :set norelativenumber nonumber
     else
-        au focuslost <buffer> :set norelativenumber number
-        au focusgained <buffer> :set relativenumber
+        au FocusLost <buffer> :set norelativenumber number
+        au FocusGained <buffer> :set relativenumber
     endif
   endfunction
 
-  au insertenter * :set norelativenumber number
-  au insertleave * :set relativenumber
-  au focuslost * :lua require 'utils'.try_save_session()
+  au FileType * set rnu nonu | call NumberToggle()
+  au InsertEnter * :set norelativenumber number
+  au InsertLeave * :set relativenumber
+  au FocusLost * :lua require 'utils'.try_save_session()
 ]]
 
 local colors = {
@@ -299,7 +299,8 @@ require("indent_blankline").setup {
 require('nvim-autopairs').setup({
   disable_filetype = { "TelescopePrompt" , "vim" },
 })
-
+g.AutoPairsShortcutToggle = "<M-a>p"
+g.AutoPairsMutilineClose = 0
 require("todo-comments").setup {
   signs = true, -- show icons in the signs column
   sign_priority = 8, -- sign priority
