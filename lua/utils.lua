@@ -14,6 +14,7 @@ M.try_complete_confirm = function()
     if vim.fn.pumvisble() ~= 0 then
         if vim.fn.complete_info()["selected"] ~= -1 then
             require 'complete'
+        end
     else
         return 
     end
