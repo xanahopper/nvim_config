@@ -286,7 +286,7 @@ require 'session_manager'.setup {
     autosave_ignore_not_normal = true,
     autosave_only_in_session = false
 }
-telescope.load_extension('sessions')
+-- telescope.load_extension('sessions')
 telescope.load_extension('packer')
 telescope.load_extension('fzf')
 
