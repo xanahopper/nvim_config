@@ -11,6 +11,13 @@ local indent = 4
 local cmd = vim.cmd
 
 local g = vim.g
+-- disable netrw at the very start of your init.lua
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
+-- set termguicolors to enable highlight groups
+vim.opt.termguicolors = true
+
 g.mapleader = ' '
 opt('o', 'helplang', 'cn')
 opt('o', 'swapfile', false)
@@ -44,7 +51,7 @@ opt('o', 'ttyfast', true)
 opt('o', 'title', true)
 opt('o', 'encoding', 'utf-8')
 opt('o', 'background', 'dark')
-opt('o', 'guifont', 'JetBrainsMono Nerd Font Mono:h13')
+opt('o', 'guifont', 'JetBrainsMono Nerd Font Mono:h12')
 
 g.neovide_remember_window_size = 1
 g.neovide_input_use_logo = 1
@@ -52,60 +59,62 @@ g.neovide_cursor_vfx_mode = 'sonicboom'
 
 g.dashboard_default_executive = 'Telescope'
 
-g.dashboard_custom_section = {
-    a = {description = {"  Find File                 SPC f f"}, command = "Telescope find_files"},
-    b = {description = {"  Recents                   SPC f h"}, command = "Telescope oldfiles"},
-    c = {description = {"縷 Find Word                 SPC f g"}, command = "Telescope live_grep"},
-    e = {description = {"  Sessions                  SPC f s"}, command = "Telescope sessions"},
-    f = {description = {"  Load Last Session         SPC l s"}, command = "LoadLastSession!"},
-    g = {description = {"  Update Plugins            SPC p u"}, command = "PackerUpdate"},
-    h = {description = {"  Settings                  SPC e v"}, command = "edit $MYVIMRC"},
-    i = {description = {"  Exit                      SPC q  "}, command = "exit"}
-}
+--local db = require('dashboard')
+
+-- g.custom_header = require 'const'.custom_dashboard_header
+-- g.custom_center = {
+--     a = {icon = '', description = {"  Find File                 SPC f f"}, command = "Telescope find_files"},
+--     b = {description = {"  Recents                   SPC f h"}, command = "Telescope oldfiles"},
+--     c = {description = {"縷 Find Word                 SPC f g"}, command = "Telescope live_grep"},
+--     e = {description = {"  Sessions                  SPC f s"}, command = "Telescope sessions"},
+--     f = {description = {"  Load Last Session         SPC l s"}, command = "LoadLastSession!"},
+--     g = {description = {"  Update Plugins            SPC p u"}, command = "PackerUpdate"},
+--     h = {description = {"  Settings                  SPC e v"}, command = "edit $MYVIMRC"},
+--     i = {description = {"  Exit                      SPC q  "}, command = "exit"}
+-- }
 local utils = require('telescope.utils')
 local set_var = vim.api.nvim_set_var
 
-local git_root, ret = utils.get_os_command_output({ "git", "rev-parse", "--show-toplevel" }, vim.loop.cwd())
-
-local function get_dashboard_git_status()
-  local git_cmd = {'git', 'status', '-s', '--', '.'}
-  local output = utils.get_os_command_output(git_cmd)
-  set_var('dashboard_custom_footer', {'Git status', '', unpack(output)})
-end
-
-if ret ~= 0 then
-  local is_worktree = utils.get_os_command_output({ "git", "rev-parse", "--is-inside-work-tree" }, vim.loop.cwd())
-  if is_worktree[1] == "true" then
-    get_dashboard_git_status()
-  else
-    set_var('dashboard_custom_footer', {'Not in a git directory'})
-  end
-else
-    get_dashboard_git_status()
-end
-g.dashboard_custom_header = require 'const'.custom_dashboard_header
+-- local git_root, ret = utils.get_os_command_output({ "git", "rev-parse", "--show-toplevel" }, vim.loop.cwd())
+--
+-- local function get_dashboard_git_status()
+--   local git_cmd = {'git', 'status', '-s', '--', '.'}
+--   local output = utils.get_os_command_output(git_cmd)
+--   set_var('dashboard_custom_footer', {'Git status', '', unpack(output)})
+-- end
+--
+-- if ret ~= 0 then
+--   local is_worktree = utils.get_os_command_output({ "git", "rev-parse", "--is-inside-work-tree" }, vim.loop.cwd())
+--   if is_worktree[1] == "true" then
+--     get_dashboard_git_status()
+--   else
+--     set_var('dashboard_custom_footer', {'Not in a git directory'})
+--   end
+-- else
+--     get_dashboard_git_status()
+-- end
 g.edge_style = 'edge'
 
-cmd [[
-  autocmd filetype netrw setl bufhidden=wipe
-  " remove dashboard number autocmd
-  au FileType dashboard,dashpreview,nvimtree,telescopeprompt set showtabline=0 | set nornu nonu | autocmd BufLeave <buffer> set showtabline=2 | autocmd BufEnter <buffer> set showtabline=0 nornu nonu
-  fun! NumberToggle()
-    if (&ft == 'dashboard')
-        au! FocusLost *
-        au! FocusGained *
-        :set norelativenumber nonumber
-    else
-        au FocusLost <buffer> :set norelativenumber number
-        au FocusGained <buffer> :set relativenumber
-    endif
-  endfunction
-
-  au FileType * set rnu nonu | call NumberToggle()
-  au InsertEnter * :set norelativenumber number
-  au InsertLeave * :set relativenumber
-  au FocusLost * :lua require 'utils'.try_save_session()
-]]
+-- cmd [[
+--   autocmd filetype netrw setl bufhidden=wipe
+--   " remove dashboard number autocmd
+--   au FileType dashboard,dashpreview,nvimtree,telescopeprompt set showtabline=0 | set nornu nonu | autocmd BufLeave <buffer> set showtabline=2 | autocmd BufEnter <buffer> set showtabline=0 nornu nonu
+--   fun! NumberToggle()
+--     if (&ft == 'dashboard')
+--         au! FocusLost *
+--         au! FocusGained *
+--         :set norelativenumber nonumber
+--     else
+--         au FocusLost <buffer> :set norelativenumber number
+--         au FocusGained <buffer> :set relativenumber
+--     endif
+--   endfunction
+--
+--   au FileType * set rnu nonu | call NumberToggle()
+--   au InsertEnter * :set norelativenumber number
+--   au InsertLeave * :set relativenumber
+-- "  au FocusLost * :lua require 'utils'.try_save_session()
+-- ]]
 
 local colors = {
   red = '#ca1243',
@@ -177,16 +186,16 @@ local function modified()
   return ''
 end
 
-local function current_session()
-    local session_utils = require 'session_manager.utils'
-    local session_file = vim.v.this_session
-    if session_utils == nil or session_file == nil then
-        return ''
-    else
-        local session_name = session_utils.session_filename_to_dir(session_file)
-        return session_name or ''
-    end
-end
+-- local function current_session()
+--     local session_utils = require 'session_manager.utils'
+--     local session_file = vim.v.this_session
+--     if session_utils == nil or session_file == nil then
+--         return ''
+--     else
+--         local session_name = session_utils.session_filename_to_dir(session_file)
+--         return session_name or ''
+--     end
+-- end
 
 require('lualine').setup {
   options = {
@@ -212,29 +221,34 @@ require('lualine').setup {
         source = { 'nvim' },
         sections = { 'error' },
         diagnostics_color = { error = { bg = colors.red, fg = colors.white } },
+        symbols = {error = ' '},
       },
       {
         'diagnostics',
         source = { 'nvim' },
         sections = { 'warn' },
         diagnostics_color = { warn = { bg = colors.orange, fg = colors.white } },
+        symbols = {error = ''}
       },
       { 'filename', file_status = false, path = 1 },
       { modified, color = { bg = colors.red } },
       {
         '%w',
+        type='stl',
         cond = function()
           return vim.wo.previewwindow
         end,
       },
       {
         '%r',
+        type='stl',
         cond = function()
           return vim.bo.readonly
         end,
       },
       {
         '%q',
+        type='stl',
         cond = function()
           return vim.bo.buftype == 'quickfix'
         end,
@@ -242,11 +256,11 @@ require('lualine').setup {
     },
     lualine_c = {},
     lualine_x = {},
-    lualine_y = { current_session, search_result, 'filetype' },
-    lualine_z = { '%l:%c', '%p%%/%L' },
+    lualine_y = {{ search_result, 'filetype', type='stl'}},
+    lualine_z = {{ '%l:%c', '%p%%/%L', type='stl'}},
   },
   inactive_sections = {
-    lualine_c = { '%f %y %m' },
+    lualine_c = {{ '%f %y %m', type='stl'}},
     lualine_x = {},
   },
 }
@@ -259,7 +273,7 @@ require 'tabline'.setup {
 require 'hop'.setup()
 cmd [[
   set guioptions-=e
-  set sessionoptions+=tabpages,globals
+  " set sessionoptions+=tabpages,globals
 ]]
 
 cmd [[colorscheme molokai]]
@@ -277,16 +291,20 @@ telescope.setup {
         }
     }
 }
-require 'session_manager'.setup {
-    sessions_dir = Path:new(vim.fn.stdpath('data'), 'sessions'),
-    path_replacer = '__',
-    colon_replacer = '++',
-    autoload_mode = require('session_manager.config').AutoloadMode.Disabled,
-    autosave_last_session = true,
-    autosave_ignore_not_normal = true,
-    autosave_only_in_session = false
-}
-telescope.load_extension('sessions')
+telescope.load_extension("workspaces")
+-- require('session-lens').setup {
+--     path_display={'shorten'},
+-- }
+--require 'session_manager'.setup {
+--    sessions_dir = Path:new(vim.fn.stdpath('data'), 'sessions'),
+--    path_replacer = '__',
+--    colon_replacer = '++',
+--    autoload_mode = require('session_manager.config').AutoloadMode.Disabled,
+--    autosave_last_session = true,
+--    autosave_ignore_not_normal = true,
+--    autosave_only_in_session = false
+--}
+-- telescope.load_extension('session-lens')
 telescope.load_extension('packer')
 telescope.load_extension('fzf')
 
@@ -357,3 +375,124 @@ require("todo-comments").setup {
     -- pattern = [[\b(KEYWORDS)\b]], -- match without the extra colon. You'll likely get false positives
   },
 }
+
+-- Mason Setup // A LSP manager
+require("mason").setup({
+    ui = {
+        icons = {
+            package_installed = "",
+            package_pending = "",
+            package_uninstalled = "",
+        },
+    }
+})
+require("mason-lspconfig").setup()
+
+local rt = require("rust-tools")
+
+rt.setup({
+})
+
+local sign = function(opts)
+    vim.fn.sign_define(opts.name, {
+        texthl = opts.name,
+        text = opts.text,
+        numhl = ''
+    })
+end
+
+sign({name = 'DiagnosticSignError', text = ''})
+sign({name = 'DiagnosticSignWarn', text = ''})
+sign({name = 'DiagnosticSignHint', text = '󰌵'})
+sign({name = 'DiagnosticSignInfo', text = ''})
+
+vim.diagnostic.config({
+    virtual_text = false,
+    signs = true,
+    update_in_insert = true,
+    underline = true,
+    severity_sort = false,
+    float = {
+        border = 'rounded',
+        source = 'always',
+        header = '',
+        prefix = '',
+    },
+})
+
+vim.cmd([[
+set signcolumn=yes
+autocmd CursorHold * lua vim.diagnostic.open_float(nil, { focusable = false })
+]])
+
+--Set completeopt to have a better completion experience
+-- :help completeopt
+-- menuone: popup even when there's only one match
+-- noinsert: Do not insert text until a selection is made
+-- noselect: Do not select, force to select one from the menu
+-- shortness: avoid showing extra messages when using completion
+-- updatetime: set updatetime for CursorHold
+vim.opt.completeopt = {'menuone', 'noselect', 'noinsert'}
+vim.opt.shortmess = vim.opt.shortmess + { c = true}
+vim.api.nvim_set_option('updatetime', 300) 
+
+-- Fixed column for diagnostics to appear
+-- Show autodiagnostic popup on cursor hover_range
+-- Goto previous / next diagnostic warning / error 
+-- Show inlay_hints more frequently 
+vim.cmd([[
+set signcolumn=yes
+autocmd CursorHold * lua vim.diagnostic.open_float(nil, { focusable = false })
+]])
+
+-- Treesitter Plugin Setup 
+require('nvim-treesitter.configs').setup {
+  ensure_installed = { "lua", "rust", "toml" },
+  auto_install = true,
+  highlight = {
+    enable = true,
+    additional_vim_regex_highlighting=false,
+  },
+  ident = { enable = true }, 
+  rainbow = {
+    enable = true,
+    extended_mode = true,
+    max_file_lines = nil,
+  }
+}
+
+-- nvim-tree setup
+local function my_on_attach(bufnr)
+  local api = require "nvim-tree.api"
+
+  local function opts(desc)
+    return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+  end
+
+  -- default mappings
+  api.config.mappings.default_on_attach(bufnr)
+
+  -- custom mappings
+  vim.keymap.set('n', '<C-t>', api.tree.change_root_to_parent,        opts('Up'))
+  vim.keymap.set('n', '?',     api.tree.toggle_help,                  opts('Help'))
+end
+require('nvim-tree').setup({
+    sort_by = "case_sensitive",
+    view = {
+        width = 30,
+    },
+    renderer = {
+        group_empty = true,
+    },
+    filters = {
+        dotfiles = true,
+    },
+    on_attach = my_on_attach,
+})
+
+require('workspaces').setup({
+    hooks = {
+        open = { "NvimTreeOpen", "Telescope find_files" }
+    }
+})
+
