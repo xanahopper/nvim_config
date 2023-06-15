@@ -59,62 +59,10 @@ g.neovide_cursor_vfx_mode = 'sonicboom'
 
 g.dashboard_default_executive = 'Telescope'
 
---local db = require('dashboard')
-
--- g.custom_header = require 'const'.custom_dashboard_header
--- g.custom_center = {
---     a = {icon = '', description = {"  Find File                 SPC f f"}, command = "Telescope find_files"},
---     b = {description = {"  Recents                   SPC f h"}, command = "Telescope oldfiles"},
---     c = {description = {"縷 Find Word                 SPC f g"}, command = "Telescope live_grep"},
---     e = {description = {"  Sessions                  SPC f s"}, command = "Telescope sessions"},
---     f = {description = {"  Load Last Session         SPC l s"}, command = "LoadLastSession!"},
---     g = {description = {"  Update Plugins            SPC p u"}, command = "PackerUpdate"},
---     h = {description = {"  Settings                  SPC e v"}, command = "edit $MYVIMRC"},
---     i = {description = {"  Exit                      SPC q  "}, command = "exit"}
--- }
 local utils = require('telescope.utils')
 local set_var = vim.api.nvim_set_var
 
--- local git_root, ret = utils.get_os_command_output({ "git", "rev-parse", "--show-toplevel" }, vim.loop.cwd())
---
--- local function get_dashboard_git_status()
---   local git_cmd = {'git', 'status', '-s', '--', '.'}
---   local output = utils.get_os_command_output(git_cmd)
---   set_var('dashboard_custom_footer', {'Git status', '', unpack(output)})
--- end
---
--- if ret ~= 0 then
---   local is_worktree = utils.get_os_command_output({ "git", "rev-parse", "--is-inside-work-tree" }, vim.loop.cwd())
---   if is_worktree[1] == "true" then
---     get_dashboard_git_status()
---   else
---     set_var('dashboard_custom_footer', {'Not in a git directory'})
---   end
--- else
---     get_dashboard_git_status()
--- end
 g.edge_style = 'edge'
-
--- cmd [[
---   autocmd filetype netrw setl bufhidden=wipe
---   " remove dashboard number autocmd
---   au FileType dashboard,dashpreview,nvimtree,telescopeprompt set showtabline=0 | set nornu nonu | autocmd BufLeave <buffer> set showtabline=2 | autocmd BufEnter <buffer> set showtabline=0 nornu nonu
---   fun! NumberToggle()
---     if (&ft == 'dashboard')
---         au! FocusLost *
---         au! FocusGained *
---         :set norelativenumber nonumber
---     else
---         au FocusLost <buffer> :set norelativenumber number
---         au FocusGained <buffer> :set relativenumber
---     endif
---   endfunction
---
---   au FileType * set rnu nonu | call NumberToggle()
---   au InsertEnter * :set norelativenumber number
---   au InsertLeave * :set relativenumber
--- "  au FocusLost * :lua require 'utils'.try_save_session()
--- ]]
 
 local colors = {
   red = '#ca1243',
@@ -196,6 +144,10 @@ end
 --         return session_name or ''
 --     end
 -- end
+local function current_lang()
+    local file_type = vim.bo.filetype
+
+end
 
 require('lualine').setup {
   options = {
@@ -292,19 +244,6 @@ telescope.setup {
     }
 }
 telescope.load_extension("workspaces")
--- require('session-lens').setup {
---     path_display={'shorten'},
--- }
---require 'session_manager'.setup {
---    sessions_dir = Path:new(vim.fn.stdpath('data'), 'sessions'),
---    path_replacer = '__',
---    colon_replacer = '++',
---    autoload_mode = require('session_manager.config').AutoloadMode.Disabled,
---    autosave_last_session = true,
---    autosave_ignore_not_normal = true,
---    autosave_only_in_session = false
---}
--- telescope.load_extension('session-lens')
 telescope.load_extension('packer')
 telescope.load_extension('fzf')
 

@@ -17,6 +17,7 @@ map('n', '<F1>', '<Esc>"')
 
 map('n', '<leader>w', '<cmd>w<CR>')
 map('n', '<leader>q', '<cmd>q<CR>')
+map('n', '<leader><leader>q', '<cmd>qa<CR>')
 map('n', '<leader>p', '"+p')
 map('n', '<leader><C-l>', '<cmd>nohlsearch<CR>')
 -- select all
